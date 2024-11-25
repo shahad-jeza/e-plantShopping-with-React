@@ -1,9 +1,11 @@
 import React, { useState,useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
+import { addItem } from './CartSlice';
 function ProductList() {
     const [showCart, setShowCart] = useState(false); 
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
+    const [addedToCart, setAddedToCart] = useState({}); //state fo added to cart
 
     const plantsArray = [
         {
@@ -246,6 +248,14 @@ const handlePlantsClick = (e) => {
     e.preventDefault();
     setShowCart(false);
   };
+      // Function to handle adding a plant to the cart
+      const handleAddToCart = (product) => {
+        dispatch(addItem(product));
+        setAddedToCart((prevState) => ({
+           ...prevState,
+           [product.name]: true, // Set the product name as key and value as true to indicate it's added to cart
+         }));
+      };
     return (
         <div>
              <div className="navbar" style={styleObj}>
@@ -268,7 +278,25 @@ const handlePlantsClick = (e) => {
         </div>
         {!showCart? (
         <div className="product-grid">
+            {plantsArray.map((category, categoryIndex) => (
+                <div key={categoryIndex}>
+                    <h1><center>{category.category}</center></h1>
+                    <div className="product-list">
+                        {category.plants.map((plant, plantIndex)=>(
+                            <div key={plantIndex} className ='product-card'>
+                                <img className ="product-image" src={plant.image} alt={plant.name} />
+                                <div className='product-title'> {plant.name} </div>
+                                <p style={{ color: 'red' }}> {plant.cost}</p>
+                                <p>{plant.description}</p>
+                                <button className="product-button" onClick={() => handleAddToCart(plant)}> Add to Cart</button>
 
+                            </div>
+                        ))} 
+
+                    </div>
+
+                </div>
+            ))}
 
         </div>
  ) :  (
